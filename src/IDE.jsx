@@ -1,21 +1,24 @@
 import { useState } from "react";
-import Editor from "react-simple-code-editor";
-import Prism from "prismjs";
-import "prismjs/themes/prism-tomorrow.css"; // Tema oscuro
-import "prismjs/components/prism-java"; // Soporte Java
+import Editor from "@monaco-editor/react";
 
 function IDE() {
   const [code, setCode] = useState(`public class Main {
-  public static void main(String[] args) {
-    System.out.println("Hola Mundo");
-  }
+    public static void main(String[] args) {
+        System.out.println("Hola Mundo");
+    }
 }`);
 
   const [semanticResult, setSemanticResult] = useState("");
   const [syntaxResult, setSyntaxResult] = useState("");
 
-  const highlight = (code) =>
-    Prism.highlight(code, Prism.languages.java, "java");
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setCode(reader.result);
+      reader.readAsText(file);
+    }
+  };
 
   const handleRunAnalysis = () => {
     setSemanticResult("Resultado del análisis semántico...");
@@ -30,22 +33,25 @@ function IDE() {
 
   return (
     <div className="h-screen bg-gray-900 text-white flex flex-col">
-      <header className="p-4 bg-indigo-600 text-center text-3xl font-bold">
-        WarningCode
+      <header className="p-1 bg-indigo-600 text-center text-yellow-300 text-3xl font-bold">
+         WarningCode 
       </header>
 
-      <div className="flex flex-1">
-        {/* Área de código con resaltado */}
+      <div className="flex">
+        {/* Editor con sintaxis y autocompletado */}
         <div className="w-full p-4 border-r-2 border-gray-700">
           <Editor
+            height="100%"
+            language="java"
             value={code}
-            onValueChange={(code) => setCode(code)}
-            highlight={highlight}
-            padding={12}
-            className="w-full h-full font-mono text-lg bg-gray-800 text-white rounded-lg overflow-auto"
-            style={{
-              minHeight: "100%",
-              outline: "none",
+            onChange={(value) => setCode(value || "")}
+            theme="vs-dark"
+            options={{
+              fontSize: 16,
+              minimap: { enabled: false },
+              automaticLayout: true,
+              scrollBeyondLastLine: false,
+              wordWrap: "on",
             }}
           />
         </div>
@@ -59,6 +65,15 @@ function IDE() {
 
       <div className="p-4 bg-indigo-600 flex justify-between">
         <div className="flex space-x-4">
+          <label className="bg-green-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-green-600">
+            Cargar Archivo
+            <input
+              type="file"
+              accept=".txt,.java,.js"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+          </label>
           <button
             onClick={handleRunAnalysis}
             className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
