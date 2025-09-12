@@ -33,13 +33,15 @@ function IDE() {
 
   return (
     <div className="h-screen bg-gray-900 text-white flex flex-col">
-      <header className="p-1 bg-indigo-600 text-center text-yellow-300 text-3xl font-bold">
-         WarningCode 
+      {/* Header */}
+      <header className="p-2 bg-indigo-600 text-center text-yellow-300 text-3xl font-bold">
+        WarningCode
       </header>
 
-      <div className="flex">
-        {/* Editor con sintaxis y autocompletado */}
-        <div className="w-full p-4 border-r-2 border-gray-700">
+      {/* Contenedor principal dividido en editor + consola */}
+      <div className="flex-1 flex flex-col">
+        {/* Editor ocupa 2/3 de la altura */}
+        <div className="flex-1 border-b-2 border-gray-700">
           <Editor
             height="100%"
             language="java"
@@ -55,14 +57,19 @@ function IDE() {
             }}
           />
         </div>
+
+        {/* Consola ocupa 1/3 de la altura */}
+        <div className="h-1/3 p-4 bg-gray-800 overflow-auto">
+          <h2 className="text-xl font-bold mb-2">Consola Sintáctica</h2>
+          <div className="mb-4">
+            {syntaxResult || "No se ha ejecutado el análisis sintáctico"}
+          </div>
+          <h2 className="text-xl font-bold mb-2">Consola Semántica</h2>
+          <div>{semanticResult || "No se ha ejecutado el análisis semántico"}</div>
+        </div>
       </div>
 
-      {/* Consola para el análisis semántico */}
-      <div className="h-1/3 p-4 bg-gray-800 border-t-2 border-gray-700 overflow-auto">
-        <h2 className="text-xl font-bold mb-4">Consola Semántica</h2>
-        <div>{semanticResult || "No se ha ejecutado el análisis semántico"}</div>
-      </div>
-
+      {/* Barra inferior con acciones */}
       <div className="p-4 bg-indigo-600 flex justify-between">
         <div className="flex space-x-4">
           <label className="bg-green-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-green-600">
